@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-analyseur}
+      POSTGRES_USER: ${DB_USER:-analyseur}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-analyseur}
+    # Exposé uniquement sur la machine locale, jamais sur le réseau.
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-analyseur} -d ${DB_NAME:-analyseur}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

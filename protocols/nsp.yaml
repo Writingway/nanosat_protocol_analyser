@@ -1,0 +1,44 @@
+# Protocole NSP — description de l'EN-TÊTE uniquement (DATA n'est pas décodée).
+# Source de vérité : l'ICD de l'entreprise. Guide d'écriture : docs/GUIDE_YAML.md
+# Ce fichier est relu automatiquement quelques secondes après chaque enregistrement.
+
+name: nsp
+label: "NSP (ICD banc)"
+description: "Nanosatellite Protocol : DST, SRC, CTRL, DATA, CRC-16"
+
+framing: slip          # les frames sont encadrées par c0 (SLIP) dans les logs
+byte_order: little     # ordre des octets par défaut des champs de plus d'un octet
+
+min_length: 5          # DST + SRC + CTRL + CRC (2), sans DATA
+max_length: 256        # au-delà, la frame est refusée (statut « trop grande »)
+
+fields:
+  - name: DST
+    offset: 0
+    size: 1
+    description: "Adresse destinataire"
+    values: {0x11: PC banc, 0x2A: Équipement}
+  - name: SRC
+    offset: 1
+    size: 1
+    description: "Adresse source"
+    values: {0x11: PC banc, 0x2A: Équipement}
+  - name: CTRL
+    offset: 2
+    size: 1
+    description: "Octet de contrôle (sens défini par l'ICD)"
+    values: {0x84: "Requête (poll, cmd 4)", 0x24: "Réponse (ACK, cmd 4)"}
+
+payload:
+  offset: 3            # DATA commence après CTRL…
+  end: -2              # …et s'arrête avant les 2 octets de CRC
+
+crc:
+  type: crc16_ccitt_false
+  offset: -2           # les 2 derniers octets
+  byte_order: little
+  from: 0              # calculé de DST…
+  to: -2               # …jusqu'à la fin de DATA
+  check: true
+
+columns: [DST, SRC, CTRL]

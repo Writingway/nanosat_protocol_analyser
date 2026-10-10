@@ -1,0 +1,34 @@
+# Protocole emea — FICTIF (inventé pour démontrer l'architecture, pas l'ICD réel).
+# Frame courte : identifiant d'équipement, numéro de séquence, type, longueur, CRC-8.
+
+name: emea
+label: "EMEA (fictif)"
+description: "Capteur solaire / magnétomètre : ID, SEQ, TYPE, LEN, DATA, CRC-8"
+
+framing: none
+byte_order: big
+
+min_length: 5
+max_length: 64
+
+fields:
+  - name: ID
+    offset: 0
+    size: 1
+    description: "Identifiant de l'équipement"
+    values: {0x01: OBC, 0x41: Capteur solaire, 0x42: Magnétomètre}
+  - {name: SEQ, offset: 1, size: 1, display: dec, description: "Numéro de séquence (0-255)"}
+  - name: TYPE
+    offset: 2
+    size: 1
+    description: "Type de message"
+    values: {0x01: Requête télémesure, 0x81: Télémesure, 0xEE: Erreur}
+  - {name: LEN, offset: 3, size: 1, display: dec, description: "Nombre d'octets de DATA"}
+
+payload: {offset: 4, end: -1}
+
+crc: {type: crc8, offset: -1, from: 0, to: -1}
+
+length: {field: LEN, counts: payload}
+
+columns: [ID, TYPE, SEQ, LEN]

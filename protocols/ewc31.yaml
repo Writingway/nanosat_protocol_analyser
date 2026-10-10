@@ -1,0 +1,39 @@
+# Protocole ewc31 — FICTIF (inventé pour démontrer l'architecture, pas l'ICD réel).
+# Frame binaire brute, sans SLIP, mot de synchro, adresses 16 bits, champ longueur.
+
+name: ewc31
+label: "EWC31 (fictif)"
+description: "Roue à inertie : SYNC, DST, SRC, LEN, CMD, DATA, CRC-16/XMODEM"
+
+framing: none
+byte_order: big
+
+min_length: 11         # en-tête 9 octets + CRC 2
+max_length: 512
+
+fields:
+  - {name: SYNC, offset: 0, size: 2, expect: 0xEB90, description: "Mot de synchronisation"}
+  - name: DST
+    offset: 2
+    size: 2
+    description: "Adresse destinataire"
+    values: {0x0001: OBC, 0x0101: Roue X, 0x0102: Roue Y, 0x0103: Roue Z}
+  - name: SRC
+    offset: 4
+    size: 2
+    description: "Adresse source"
+    values: {0x0001: OBC, 0x0101: Roue X, 0x0102: Roue Y, 0x0103: Roue Z}
+  - {name: LEN, offset: 6, size: 2, display: dec, description: "Nombre d'octets de DATA"}
+  - name: CMD
+    offset: 8
+    size: 1
+    description: "Code commande"
+    values: {0x10: Lire vitesse, 0x11: Consigne vitesse, 0x90: Réponse vitesse, 0x91: Acquittement}
+
+payload: {offset: 9, end: -2}
+
+crc: {type: crc16_xmodem, offset: -2, byte_order: big, from: 0, to: -2}
+
+length: {field: LEN, counts: payload}
+
+columns: [DST, SRC, CMD, LEN]

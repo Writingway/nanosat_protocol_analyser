@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+frontend/dist/
+
+# Environnement local
+.env
+
+# Logs générés par les bancs
+python_mqtt/archive_*.txt
+bench/records/
+
+# Éditeurs
+.vscode/
+.idea/
