@@ -45,7 +45,7 @@ dev:
 
 SPEED ?= 1
 replay:
-	cd python_mqtt && python3 replay.py --in archive_EquipSerialIn.txt --out archive_EquipSerialOut.txt --speed $(SPEED)
+	cd ../python_mqtt && python3 replay.py --in archive_EquipSerialIn.txt --out archive_EquipSerialOut.txt --speed $(SPEED)
 
 test:
 	cd backend && .venv/bin/python -m pytest -q
@@ -55,8 +55,8 @@ lint:
 	cd backend && .venv/bin/ruff check .
 
 import-demo:
-	cd python_mqtt && python3 gen_logs.py 500 --broken
-	$(MANAGE) import_log ../python_mqtt/archive_EquipSerialIn.txt ../python_mqtt/archive_EquipSerialOut.txt \
+	cd ../python_mqtt && python3 gen_logs.py 500 --broken
+	$(MANAGE) import_log ../../python_mqtt/archive_EquipSerialIn.txt ../../python_mqtt/archive_EquipSerialOut.txt \
 		--equipment equip --protocol nsp --bench banc-local --force
 
 # Simulateur de bancs en boucle (Ctrl+C pour arrêter). Ex. : make bench BENCHES=3 ERRORS=5

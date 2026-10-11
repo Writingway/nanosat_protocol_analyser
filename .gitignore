@@ -1,21 +1,25 @@
-# Python
+# Environnements Python (à recréer avec python3 -m venv .venv)
+.venv/
 __pycache__/
 *.pyc
-.venv/
 .pytest_cache/
 .ruff_cache/
 
 # Node
 node_modules/
-frontend/dist/
+app/frontend/dist/
 
-# Environnement local
+# Secrets locaux
 .env
 
-# Logs générés par les bancs
-python_mqtt/archive_*.txt
-bench/records/
+# Logs générés par les bancs (regénérables avec gen_logs.py)
+archive_*.txt
+app/bench/records/
 
 # Éditeurs
 .vscode/
 .idea/
+
+# Cache de Vite
+.vite/
+*.tsbuildinfo

@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 
 from captures.models import Capture
 
-BENCH = Path(__file__).resolve().parents[2] / "python_mqtt"
+BENCH = Path(__file__).resolve().parents[3] / "python_mqtt"
 
 LINES_IN = (
     "0.000 | 2026-10-07T09:00:00.000 | 2026-10-07T09:00:00.003 | data=c02a11840a90003045bec0\n"
