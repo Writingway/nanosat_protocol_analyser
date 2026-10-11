@@ -1,5 +1,6 @@
 from django.urls import path
 
+from captures.api import live, stream
 from captures.api import views as cv
 from protocols import views as pv
 
@@ -14,4 +15,8 @@ urlpatterns = [
     path("api/frames/<int:pk>/", cv.FrameDetailView.as_view()),
     path("api/frames/<int:pk>/index/", cv.FrameIndexView.as_view()),
     path("api/sources/", cv.SourceListView.as_view()),
+    path("api/live/", live.LiveView.as_view()),
+    path("api/live/start/", live.LiveStartView.as_view()),
+    path("api/live/stop/", live.LiveStopView.as_view()),
+    path("api/stream/", stream.stream),
 ]

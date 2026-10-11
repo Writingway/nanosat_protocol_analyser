@@ -1,0 +1,26 @@
+# Configuration de la capture live MQTT (lue au démarrage de `manage.py mqtt_ingest`).
+# L'analyseur s'abonne seulement : il ne publie JAMAIS rien sur le broker.
+
+broker:
+  host: localhost
+  port: 1883
+  client_id: analyseur-ingest
+  keepalive: 30
+
+# Abonnements MQTT (+ = un niveau quelconque, # = tout le reste).
+subscribe:
+  - "+/serial/+"        # <equipement>/serial/in|out          (banc python_mqtt)
+  - "+/+/serial/+"      # <banc>/<equipement>/serial/in|out   (simulateur multi-bancs)
+
+# Comment lire un topic. Le premier motif qui correspond gagne.
+# {bench}, {equipment} et {direction} (in ou out) sont extraits du topic.
+topics:
+  - "{bench}/{equipment}/serial/{direction}"
+  - "{equipment}/serial/{direction}"
+
+# Protocole (nom du fichier YAML dans protocols/) utilisé pour chaque équipement.
+equipments:
+  equip: nsp
+  gyro: nsp
+  roue: ewc31
+  capteur_sol: emea

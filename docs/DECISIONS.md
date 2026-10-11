@@ -52,3 +52,20 @@ les pages visibles.
 ## Compteur de frames
 `Capture.frame_count` est un compteur tenu à jour à chaque lot écrit, pour éviter un `COUNT(*)`
 par capture dans la liste des captures.
+
+## Capture live
+Process séparé (`manage.py mqtt_ingest`). Le thread réseau MQTT ne fait que déposer les messages
+dans une file : il ne bloque jamais, le broker ne voit pas d'abonné lent. Le thread principal est
+le seul à écrire en base, par lots (500 frames ou 200 ms). La capture se démarre et s'arrête
+depuis l'IHM ; hors capture, les messages sont comptés mais pas enregistrés. Reconnexion
+automatique (1 à 30 s) avec réabonnement ; chaque coupure est notée dans la capture
+(les frames émises pendant la coupure sont perdues : QoS 0).
+
+## Temps réel vers l'IHM
+Server-Sent Events alimentés par `LISTEN/NOTIFY` PostgreSQL : aucune brique en plus (ni Redis
+ni Channels). Les événements sont légers (« N frames ajoutées à la capture X ») ; le navigateur
+recharge seulement les lignes visibles, au plus deux fois par seconde.
+
+## Colonne « Temps »
+Secondes depuis la première frame de la capture, selon l'horloge du banc (pas depuis le clic
+sur Démarrer), pour rester cohérente avec les dates écrites dans les logs.

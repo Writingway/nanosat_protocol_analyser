@@ -1,5 +1,5 @@
 """Conversion modèles → JSON. Fonctions simples plutôt que des Serializer DRF : tout est en lecture."""
-from django.db.models import Count
+from django.db.models import Count, Min
 
 from protocols.engine.decoder import decode
 from protocols.engine.framing import deframe
@@ -57,8 +57,11 @@ def capture_detail_json(c: Capture) -> dict:
         if spec:
             protocols.append(protocol_meta(pv.id, spec, pv.sha256))
 
+    # Origine de la colonne « Temps » : 1re frame (horloge du banc), pas l'heure de démarrage de la capture.
+    first_ts = c.frames.aggregate(t=Min("ts"))["t"]
     return {
         **capture_json(c),
+        "first_ts": first_ts,
         "sources": [source_json(s) for s in Source.objects.filter(id__in=sources)],
         "protocols": protocols,
         "status_counts": statuses,
